@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">QuickWeChatCall</string>
+    <string name="app_name">微信一键视频聊天</string>
+    <string name="accessibility_description">微信一键视频聊天需要使用无障碍服务</string>
 </resources>
