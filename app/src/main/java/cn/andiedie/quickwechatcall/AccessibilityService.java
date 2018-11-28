@@ -1,5 +1,6 @@
 package cn.andiedie.quickwechatcall;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
@@ -71,6 +72,7 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
             if (target != null) {
                 currentStep = Step.CLICK_TARGET;
                 Log.d(TAG, "new task: " + target);
+                launchWeChat();
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -173,5 +175,17 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
             node.recycle();
             clickNode(parent);
         }
+    }
+
+    private void launchWeChat() {
+        Intent intent = new Intent();
+        ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setComponent(cmp);
+        startActivity(intent);
     }
 }

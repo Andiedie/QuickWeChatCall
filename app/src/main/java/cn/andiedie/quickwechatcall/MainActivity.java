@@ -1,6 +1,5 @@
 package cn.andiedie.quickwechatcall;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,16 +28,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AccessibilityService.class);
         intent.putExtra("target", "节能君");
         startService(intent);
-        // launch WeChat
-        intent = new Intent();
-        ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.setComponent(cmp);
-        startActivity(intent);
     }
 
     private boolean isAccessibilitySettingsOn(Context mContext) {
