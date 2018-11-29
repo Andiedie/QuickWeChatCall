@@ -19,6 +19,8 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.litesuits.common.data.DataKeeper;
+import com.litesuits.common.utils.HexUtil;
+import com.litesuits.common.utils.MD5Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,10 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+                            String wechatName = contacts.get(position);
                             contacts.remove(position);
+                            String filename = HexUtil.encodeHexStr(MD5Util.md5(wechatName)) + Constants.FORMAT_EXTENSION;
+                            deleteFile(filename);
                             dataKeeper.put(Constants.CONTACTS_KEY, contacts);
                             adapter.notifyDataSetChanged();
                             dialog.dismiss();
