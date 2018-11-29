@@ -1,10 +1,12 @@
 package cn.andiedie.quickwechatcall;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int BACK_FROM_ADD_CONTACT_ACTIVITY = 10086;
     private List<String> contacts;
     private ContactAdapter adapter;
+    private DataKeeper dataKeeper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +47,11 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ContactAdapter(this, contacts);
         contactsList.setAdapter(adapter);
         contactsList.setOnItemClickListener(onItemClick);
+        contactsList.setOnItemLongClickListener(onLongClick);
     }
 
     private void initContacts() {
-        DataKeeper dataKeeper = new DataKeeper(this, Constants.SHARE_PREFERENCES_NAME);
+        dataKeeper = new DataKeeper(this, Constants.SHARE_PREFERENCES_NAME);
         Object object = dataKeeper.get(Constants.CONTACTS_KEY);
         if (object == null) {
             object = new ArrayList<String>();
@@ -74,6 +78,32 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             launchTask(contacts.get(position));
+        }
+    };
+
+    private AdapterView.OnItemLongClickListener onLongClick = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.setTitle("删除");
+            alertDialog.setMessage("确定要删除快捷联系人\"" + contacts.get(position) + "\"吗？");
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            contacts.remove(position);
+                            dataKeeper.put(Constants.CONTACTS_KEY, contacts);
+                            adapter.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            return false;
         }
     };
 
