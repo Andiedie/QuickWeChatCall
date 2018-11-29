@@ -10,13 +10,15 @@ import android.widget.Toast;
 
 public class AccessibilityService extends android.accessibilityservice.AccessibilityService {
     private static final String TAG = "AccessibilityService";
-    private static final String INFORMATION_DESCRIPTION = "聊天信息";
     private static final String CALL_TEXT = "视频通话";
     private static final String RECEIVE_DESCRIPTION = "接听";
+    private static final String CONTACT_TEXT = "通讯录";
+    private static final String TAG_TEXT = "标签";
+    private static final String QUICK_WECHAT_CALL_TEXT = "微信一键视频";
     private Step currentStep = Step.WAITING;
     private String target = null;
 
-    private static final int WAIT = 100;
+    private static final int WAIT = 500;
     private boolean finished = true;
     private Handler handler = null;
     private AccessibilityEvent input = null;
@@ -30,9 +32,10 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
 
     private enum Step {
         WAITING,
+        CLICK_CONTACT,
+        CLICK_TAG,
+        CLICK_QUICK_WECHAT_CALL,
         CLICK_TARGET,
-        CLICK_INFORMATION,
-        CLICK_AVATAR,
         CLICK_CALL,
         CLICK_VIDEO_CALL;
 
@@ -70,7 +73,7 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
         if (intent != null) {
             target = intent.getStringExtra(Constants.TARGET_INTENT_EXTRA_KEY);
             if (target != null) {
-                currentStep = Step.CLICK_TARGET;
+                currentStep = Step.CLICK_CONTACT;
                 Log.d(TAG, "new task: " + target);
                 launchWeChat();
             }
@@ -105,13 +108,16 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
                     Toast.makeText(this, "自动接听视频/语音聊天", Toast.LENGTH_LONG).show();
                 }
                 break;
+            case CLICK_CONTACT:
+                step(Property.TEXT, CONTACT_TEXT);
+                break;
+            case CLICK_TAG:
+                step(Property.TEXT, TAG_TEXT);
+                break;
+            case CLICK_QUICK_WECHAT_CALL:
+                step(Property.TEXT, QUICK_WECHAT_CALL_TEXT);
+                break;
             case CLICK_TARGET:
-                step(Property.TEXT, target);
-                break;
-            case CLICK_INFORMATION:
-                step(Property.DESCRIPTION, INFORMATION_DESCRIPTION);
-                break;
-            case CLICK_AVATAR:
                 step(Property.TEXT, target);
                 break;
             case CLICK_CALL:
@@ -130,9 +136,9 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
         AccessibilityNodeInfo node = findNode(getRootInActiveWindow(), type, text);
         if (node != null) {
             clickNode(node);
-            Log.d(TAG, "" + currentStep + " done");
+            Log.d(TAG, currentStep + " done");
             currentStep = currentStep.next();
-            Log.d(TAG, "next: " + currentStep + "");
+            Log.d(TAG, "next: " + currentStep);
             return true;
         }
         return false;
