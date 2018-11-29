@@ -5,9 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.GridView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,6 +22,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        checkAccessibility();
+        initUI();
+    }
+
+    private void initUI() {
+//        GridView contactsList = (GridView) findViewById(R.id.contacts_list);
+    }
+
+    private void checkAccessibility() {
         if (!isAccessibilitySettingsOn(getApplicationContext())) {
             Toast.makeText(this, "请先打开无障碍服务", Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
@@ -28,6 +43,21 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AccessibilityService.class);
         intent.putExtra("target", "节能君");
         startService(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_add) {
+            Intent intent = new Intent(this, AddContactActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private boolean isAccessibilitySettingsOn(Context mContext) {

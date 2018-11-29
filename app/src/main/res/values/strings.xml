@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">微信一键视频聊天</string>
     <string name="accessibility_description">微信一键视频聊天需要使用无障碍服务</string>
+    <string name="action_plus_title">新建快捷联系人</string>
+    <string name="wechat_name_hint">微信昵称</string>
+    <string name="avatar_description">头像</string>
 </resources>
