@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUI() {
-//        GridView contactsList = (GridView) findViewById(R.id.contacts_list);
+        GridView contactsList = findViewById(R.id.contacts_list);
+        contactsList.setAdapter(new ContactAdapter(this));
     }
 
     private void checkAccessibility() {

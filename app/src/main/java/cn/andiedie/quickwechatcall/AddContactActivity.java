@@ -5,24 +5,33 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.litesuits.common.data.DataKeeper;
+import com.litesuits.common.io.IOUtils;
+import com.litesuits.common.utils.HexUtil;
+import com.litesuits.common.utils.MD5Util;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddContactActivity extends AppCompatActivity {
     private static final String TAG = "AddContactActivity";
     private static final int PICK_AVATAR = 38453;
-    private static final Bitmap.CompressFormat UCROP_FORMAT = Bitmap.CompressFormat.JPEG;
-    private static final String CROPPED_AVATAR_NAME = "cropped_avatar.jpg";
+
     private ImageView avatarImageView;
+    private EditText wechatNameEditText;
     private Uri avatarUri = null;
 
     @Override
@@ -34,7 +43,9 @@ public class AddContactActivity extends AppCompatActivity {
 
     private void initUI() {
         avatarImageView = findViewById(R.id.iv_avatar);
+        wechatNameEditText = findViewById(R.id.et_wechat_name);
         avatarImageView.setOnClickListener(onAvatarClick);
+        findViewById(R.id.btn_add_contact).setOnClickListener(onAddContactButtonClick);
     }
 
     private View.OnClickListener onAvatarClick = new View.OnClickListener() {
@@ -47,13 +58,43 @@ public class AddContactActivity extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener onAddContactButtonClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String wechatName = wechatNameEditText.getText().toString();
+            if (TextUtils.isEmpty(wechatName)) {
+                wechatNameEditText.setError("请填入微信昵称");
+                return;
+            }
+            if (avatarUri != null) {
+                String filename = HexUtil.encodeHexStr(MD5Util.md5(wechatName)) + Constants.FORMAT_EXTENSION;
+                try {
+                    IOUtils.copy(new FileInputStream(avatarUri.getPath()), openFileOutput(filename, Context.MODE_PRIVATE));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(AddContactActivity.this, "保存头像失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+            DataKeeper dk = new DataKeeper(AddContactActivity.this, Constants.SHARE_PREFERENCES_NAME);
+            Object object = dk.get(Constants.CONTACTS_KEY);
+            if (object == null) {
+                object = new ArrayList<String>();
+            }
+            @SuppressWarnings("unchecked")
+            List<String> contacts = (List<String>) object;
+            contacts.add(wechatName);
+            dk.put(Constants.CONTACTS_KEY, contacts);
+            AddContactActivity.this.finish();
+        }
+    };
+
     private void startCrop(Uri source) {
         UCrop.Options options = new UCrop.Options();
-        options.setCompressionFormat(UCROP_FORMAT);
-        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        options.setActiveWidgetColor(ContextCompat.getColor(this, R.color.colorAccent));
-        options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        UCrop.of(source, Uri.fromFile(new File(getCacheDir(), CROPPED_AVATAR_NAME)))
+        options.setCompressionFormat(Constants.UCROP_FORMAT);
+        options.setToolbarColor(getColor(R.color.colorPrimary));
+        options.setActiveWidgetColor(getColor(R.color.colorAccent));
+        options.setStatusBarColor(getColor(R.color.colorPrimary));
+        UCrop.of(source, Uri.fromFile(new File(getCacheDir(), Constants.CROPPED_AVATAR_NAME)))
                 .withAspectRatio(1, 1)
                 .withOptions(options)
                 .start(this);
@@ -63,7 +104,7 @@ public class AddContactActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
-            Log.d(TAG, "ActivityResult BAD" + data);
+            Log.d(TAG, "ActivityResult BAD: " + data);
             return;
         }
         if (data == null) {
