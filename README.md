@@ -46,7 +46,7 @@
 在应用主界面中，点击右上角的电话图标，可以设置是否自动接听视频/语音聊天。
 
 ## 截图
-
+![](https://github.com/Andiedie/QuickWeChatCall/blob/master/screenshot.gif)
 
 ## LICENSE
 MIT
