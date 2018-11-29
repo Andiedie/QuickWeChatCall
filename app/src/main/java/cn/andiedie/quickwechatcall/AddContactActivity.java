@@ -2,12 +2,11 @@ package cn.andiedie.quickwechatcall;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,37 +37,6 @@ public class AddContactActivity extends AppCompatActivity {
     private Uri avatarUri = null;
     private List<String> contacts = null;
     private DataKeeper dk = null;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_contact);
-        initUI();
-    }
-
-    private void initUI() {
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        dk = new DataKeeper(AddContactActivity.this, Constants.SHARE_PREFERENCES_NAME);
-        avatarImageView = findViewById(R.id.iv_avatar);
-        wechatNameEditText = findViewById(R.id.et_wechat_name);
-        avatarImageView.setOnClickListener(onAvatarClick);
-        findViewById(R.id.btn_add_contact).setOnClickListener(onAddContactButtonClick);
-    }
-
-    private void initContacts() {
-        Object object = dk.get(Constants.CONTACTS_KEY);
-        if (object == null) {
-            object = new ArrayList<String>();
-        }
-        @SuppressWarnings("unchecked")
-        List<String> contacts = (List<String>) object;
-        this.contacts = contacts;
-    }
-
     private View.OnClickListener onAvatarClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -78,7 +46,6 @@ public class AddContactActivity extends AppCompatActivity {
             startActivityForResult(Intent.createChooser(intent, "选择头像"), PICK_AVATAR);
         }
     };
-
     private View.OnClickListener onAddContactButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -112,6 +79,36 @@ public class AddContactActivity extends AppCompatActivity {
             AddContactActivity.this.finish();
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_contact);
+        initUI();
+    }
+
+    private void initUI() {
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        dk = new DataKeeper(AddContactActivity.this, Constants.SHARE_PREFERENCES_NAME);
+        avatarImageView = findViewById(R.id.iv_avatar);
+        wechatNameEditText = findViewById(R.id.et_wechat_name);
+        avatarImageView.setOnClickListener(onAvatarClick);
+        findViewById(R.id.btn_add_contact).setOnClickListener(onAddContactButtonClick);
+    }
+
+    private void initContacts() {
+        Object object = dk.get(Constants.CONTACTS_KEY);
+        if (object == null) {
+            object = new ArrayList<String>();
+        }
+        @SuppressWarnings("unchecked")
+        List<String> contacts = (List<String>) object;
+        this.contacts = contacts;
+    }
 
     private void startCrop(Uri source) {
         UCrop.Options options = new UCrop.Options();

@@ -1,8 +1,8 @@
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
-    android:description="@string/accessibility_description"
-    android:packageNames="com.tencent.mm"
     android:accessibilityEventTypes="typeAllMask"
-    android:accessibilityFlags="flagIncludeNotImportantViews"
     android:accessibilityFeedbackType="feedbackSpoken"
+    android:accessibilityFlags="flagIncludeNotImportantViews"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/accessibility_description"
     android:notificationTimeout="100"
-    android:canRetrieveWindowContent="true"/>
+    android:packageNames="com.tencent.mm" />

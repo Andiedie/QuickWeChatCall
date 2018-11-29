@@ -15,10 +15,9 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
     private static final String CONTACT_TEXT = "通讯录";
     private static final String TAG_TEXT = "标签";
     private static final String QUICK_WECHAT_CALL_TEXT = "微信一键视频";
+    private static final int WAIT = 500;
     private Step currentStep = Step.WAITING;
     private String target = null;
-
-    private static final int WAIT = 500;
     private boolean finished = true;
     private Handler handler = null;
     private AccessibilityEvent input = null;
@@ -29,26 +28,6 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
             finished = true;
         }
     };
-
-    private enum Step {
-        WAITING,
-        CLICK_CONTACT,
-        CLICK_TAG,
-        CLICK_QUICK_WECHAT_CALL,
-        CLICK_TARGET,
-        CLICK_CALL,
-        CLICK_VIDEO_CALL;
-
-        private Step next() {
-            return values()[(this.ordinal() + 1) % values().length];
-        }
-    }
-
-    private enum Property {
-        TEXT,
-        CLASS_NAME,
-        DESCRIPTION
-    }
 
     @Override
     public void onCreate() {
@@ -193,5 +172,25 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.setComponent(cmp);
         startActivity(intent);
+    }
+
+    private enum Step {
+        WAITING,
+        CLICK_CONTACT,
+        CLICK_TAG,
+        CLICK_QUICK_WECHAT_CALL,
+        CLICK_TARGET,
+        CLICK_CALL,
+        CLICK_VIDEO_CALL;
+
+        private Step next() {
+            return values()[(this.ordinal() + 1) % values().length];
+        }
+    }
+
+    private enum Property {
+        TEXT,
+        CLASS_NAME,
+        DESCRIPTION
     }
 }

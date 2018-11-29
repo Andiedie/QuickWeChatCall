@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="10dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="10dp">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/iv_avatar"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1:1"
-            android:src="@drawable/ic_default_avatar"
+            android:contentDescription="@string/avatar_description"
             android:scaleType="fitCenter"
-            android:contentDescription="@string/avatar_description" />
+            android:src="@drawable/ic_default_avatar"
+            app:layout_constraintDimensionRatio="1:1" />
 
         <TextView
             android:id="@+id/tv_wechat_name"
-            app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
-            android:textColor="@color/white"
-            android:background="@color/transparentBlack"
-            android:textSize="25sp"
-            android:gravity="center"
-            android:text="@string/wechat_name_hint"
-            android:padding="5dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@color/transparentBlack"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/wechat_name_hint"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_avatar" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

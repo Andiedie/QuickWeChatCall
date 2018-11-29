@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.litesuits.common.utils.HexUtil;
@@ -45,7 +44,8 @@ public class ContactAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) convertView = inflater.inflate(R.layout.contact_item, parent, false);
+        if (convertView == null)
+            convertView = inflater.inflate(R.layout.contact_item, parent, false);
         String wechatName = contacts.get(position);
         String filename = HexUtil.encodeHexStr(MD5Util.md5(wechatName)) + Constants.FORMAT_EXTENSION;
         try {

@@ -14,10 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import com.litesuits.common.data.DataKeeper;
@@ -31,6 +29,37 @@ public class MainActivity extends AppCompatActivity {
     private List<String> contacts;
     private ContactAdapter adapter;
     private DataKeeper dataKeeper;
+    private AdapterView.OnItemClickListener onItemClick = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            launchTask(contacts.get(position));
+        }
+    };
+    private AdapterView.OnItemLongClickListener onLongClick = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+            alertDialog.setTitle("删除");
+            alertDialog.setMessage("确定要删除快捷联系人\"" + contacts.get(position) + "\"吗？");
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            contacts.remove(position);
+                            dataKeeper.put(Constants.CONTACTS_KEY, contacts);
+                            adapter.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,39 +102,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(Constants.TARGET_INTENT_EXTRA_KEY, target);
         startService(intent);
     }
-
-    private AdapterView.OnItemClickListener onItemClick = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            launchTask(contacts.get(position));
-        }
-    };
-
-    private AdapterView.OnItemLongClickListener onLongClick = new AdapterView.OnItemLongClickListener() {
-        @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-            alertDialog.setTitle("删除");
-            alertDialog.setMessage("确定要删除快捷联系人\"" + contacts.get(position) + "\"吗？");
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "确定",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            contacts.remove(position);
-                            dataKeeper.put(Constants.CONTACTS_KEY, contacts);
-                            adapter.notifyDataSetChanged();
-                            dialog.dismiss();
-                        }
-                    });
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "取消",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-            alertDialog.show();
-            return false;
-        }
-    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
