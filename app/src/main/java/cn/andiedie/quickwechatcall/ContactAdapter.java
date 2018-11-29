@@ -7,15 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.litesuits.common.data.DataKeeper;
 import com.litesuits.common.utils.HexUtil;
 import com.litesuits.common.utils.MD5Util;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ContactAdapter extends BaseAdapter {
@@ -23,16 +22,9 @@ public class ContactAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<String> contacts;
 
-    public ContactAdapter(Context context) {
+    public ContactAdapter(Context context, List<String> contacts) {
         this.mContext = context;
         this.inflater = LayoutInflater.from(context);
-        DataKeeper dk = new DataKeeper(context, Constants.SHARE_PREFERENCES_NAME);
-        Object object = dk.get(Constants.CONTACTS_KEY);
-        if (object == null) {
-            object = new ArrayList<String>();
-        }
-        @SuppressWarnings("unchecked")
-        List<String> contacts = (List<String>) object;
         this.contacts = contacts;
     }
 

@@ -36,24 +36,37 @@ public class AddContactActivity extends AppCompatActivity {
     private ImageView avatarImageView;
     private EditText wechatNameEditText;
     private Uri avatarUri = null;
+    private List<String> contacts = null;
+    private DataKeeper dk = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         initUI();
     }
 
     private void initUI() {
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        dk = new DataKeeper(AddContactActivity.this, Constants.SHARE_PREFERENCES_NAME);
         avatarImageView = findViewById(R.id.iv_avatar);
         wechatNameEditText = findViewById(R.id.et_wechat_name);
         avatarImageView.setOnClickListener(onAvatarClick);
         findViewById(R.id.btn_add_contact).setOnClickListener(onAddContactButtonClick);
+    }
+
+    private void initContacts() {
+        Object object = dk.get(Constants.CONTACTS_KEY);
+        if (object == null) {
+            object = new ArrayList<String>();
+        }
+        @SuppressWarnings("unchecked")
+        List<String> contacts = (List<String>) object;
+        this.contacts = contacts;
     }
 
     private View.OnClickListener onAvatarClick = new View.OnClickListener() {
@@ -74,6 +87,13 @@ public class AddContactActivity extends AppCompatActivity {
                 wechatNameEditText.setError("请填入微信昵称");
                 return;
             }
+            if (contacts == null) {
+                initContacts();
+            }
+            if (contacts.indexOf(wechatName) != -1) {
+                wechatNameEditText.setError("该昵称已存在");
+                return;
+            }
             if (avatarUri != null) {
                 String filename = HexUtil.encodeHexStr(MD5Util.md5(wechatName)) + Constants.FORMAT_EXTENSION;
                 try {
@@ -83,15 +103,12 @@ public class AddContactActivity extends AppCompatActivity {
                     Toast.makeText(AddContactActivity.this, "保存头像失败", Toast.LENGTH_SHORT).show();
                 }
             }
-            DataKeeper dk = new DataKeeper(AddContactActivity.this, Constants.SHARE_PREFERENCES_NAME);
-            Object object = dk.get(Constants.CONTACTS_KEY);
-            if (object == null) {
-                object = new ArrayList<String>();
-            }
-            @SuppressWarnings("unchecked")
-            List<String> contacts = (List<String>) object;
+
             contacts.add(wechatName);
             dk.put(Constants.CONTACTS_KEY, contacts);
+            Intent intent = new Intent();
+            intent.putExtra(Constants.WECHAT_NAME_INTENT_EXTRA_KEY, wechatName);
+            setResult(RESULT_OK, intent);
             AddContactActivity.this.finish();
         }
     };
@@ -112,7 +129,8 @@ public class AddContactActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
-            Log.d(TAG, "ActivityResult BAD: " + data);
+            Log.d(TAG, "requestCode: " + requestCode);
+            Log.d(TAG, "resultCode: " + resultCode);
             return;
         }
         if (data == null) {
