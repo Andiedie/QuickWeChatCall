@@ -8,6 +8,8 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
+import com.litesuits.common.data.DataKeeper;
+
 public class AccessibilityService extends android.accessibilityservice.AccessibilityService {
     private static final String TAG = "AccessibilityService";
     private static final String CALL_TEXT = "视频通话";
@@ -18,6 +20,7 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
     private static final int WAIT = 500;
     private Step currentStep = Step.WAITING;
     private String target = null;
+    private boolean autoAccept = false;
     private boolean finished = true;
     private Handler handler = null;
     private AccessibilityEvent input = null;
@@ -32,6 +35,7 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
     @Override
     public void onCreate() {
         super.onCreate();
+        autoAccept = new DataKeeper(this, Constants.SHARE_PREFERENCES_NAME).get(Constants.AUTO_ACCEPT_KEY, false);
         Log.d(TAG, "Service Created");
     }
 
@@ -50,11 +54,17 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            target = intent.getStringExtra(Constants.TARGET_INTENT_EXTRA_KEY);
-            if (target != null) {
-                currentStep = Step.CLICK_CONTACT;
-                Log.d(TAG, "new task: " + target);
-                launchWeChat();
+            int type = intent.getIntExtra(Constants.SERVICE_START_TYPE, Constants.NOT_SERVICE_START_TYPE);
+            switch (type) {
+                case Constants.NEW_TASK_SERVICE_START_TYPE:
+                    target = intent.getStringExtra(Constants.TARGET_INTENT_EXTRA_KEY);
+                    currentStep = Step.CLICK_CONTACT;
+                    Log.d(TAG, "new task: " + target);
+                    launchWeChat();
+                    break;
+                case Constants.AUTO_ACCEPT_CHANGE_SERVICE_START_TYPE:
+                    autoAccept = intent.getBooleanExtra(Constants.AUTO_ACCEPT_INTENT_EXTRA_KEY, autoAccept);
+                    break;
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -82,6 +92,7 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
         Log.v(TAG, "onAccessibilityEvent" + event.toString());
         switch (currentStep) {
             case WAITING:
+                if (!autoAccept) return;
                 if (step(Property.DESCRIPTION, RECEIVE_DESCRIPTION)) {
                     currentStep = Step.WAITING;
                     Toast.makeText(this, "自动接听视频/语音聊天", Toast.LENGTH_LONG).show();

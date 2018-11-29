@@ -5,8 +5,14 @@
     tools:context=".MainActivity">
 
     <item
+        android:id="@+id/auto_accept"
+        android:icon="@drawable/ic_no_auto_accept"
+        android:title="@string/action_auto_accept_title"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_add"
         android:icon="@drawable/ic_plus"
-        android:title="@string/action_plus_title"
+        android:title="@string/action_add_title"
         app:showAsAction="ifRoom" />
 </menu>
