@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.Toast;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         GridView contactsList = findViewById(R.id.contacts_list);
         adapter = new ContactAdapter(this, contacts);
         contactsList.setAdapter(adapter);
+        contactsList.setOnItemClickListener(onItemClick);
     }
 
     private void initContacts() {
@@ -62,12 +64,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void launchTask(View view) {
-        // start service
+    public void launchTask(String target) {
         Intent intent = new Intent(this, AccessibilityService.class);
-        intent.putExtra("target", "节能君");
+        intent.putExtra(Constants.TARGET_INTENT_EXTRA_KEY, target);
         startService(intent);
     }
+
+    private AdapterView.OnItemClickListener onItemClick = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            launchTask(contacts.get(position));
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

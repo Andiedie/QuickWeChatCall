@@ -68,7 +68,7 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            target = intent.getStringExtra("target");
+            target = intent.getStringExtra(Constants.TARGET_INTENT_EXTRA_KEY);
             if (target != null) {
                 currentStep = Step.CLICK_TARGET;
                 Log.d(TAG, "new task: " + target);

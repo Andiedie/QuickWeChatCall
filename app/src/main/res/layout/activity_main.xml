@@ -17,12 +17,12 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/contacts_list"
+        android:drawSelectorOnTop="true"
         android:numColumns="2"
         android:verticalSpacing="5dp"
         android:horizontalSpacing="5dp"
         android:padding="5dp"
         android:layout_height="0dp"
-        android:layout_width="0dp">
-    </GridView>
+        android:layout_width="0dp" />
 
 </android.support.constraint.ConstraintLayout>
