@@ -12,11 +12,12 @@ import com.litesuits.common.data.DataKeeper;
 
 public class AccessibilityService extends android.accessibilityservice.AccessibilityService {
     private static final String TAG = "AccessibilityService";
-    private static final String CALL_TEXT = "视频通话";
+    private static final String CALL_TEXT = "音视频通话";
+    private static final String VIDEO_TEXT = "视频通话";
     private static final String RECEIVE_DESCRIPTION = "接听";
     private static final String CONTACT_TEXT = "通讯录";
     private static final String TAG_TEXT = "标签";
-    private static final String QUICK_WECHAT_CALL_TEXT = "微信一键视频";
+    private static final String TAG_NAME = "微信一键视频";
     private static final int WAIT = 500;
     private Step currentStep = Step.WAITING;
     private String target = null;
@@ -105,7 +106,7 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
                 step(Property.TEXT, TAG_TEXT);
                 break;
             case CLICK_QUICK_WECHAT_CALL:
-                step(Property.TEXT, QUICK_WECHAT_CALL_TEXT);
+                step(Property.TEXT, TAG_NAME);
                 break;
             case CLICK_TARGET:
                 step(Property.TEXT, target);
@@ -114,7 +115,7 @@ public class AccessibilityService extends android.accessibilityservice.Accessibi
                 step(Property.TEXT, CALL_TEXT);
                 break;
             case CLICK_VIDEO_CALL:
-                if (step(Property.TEXT, CALL_TEXT)) {
+                if (step(Property.TEXT, VIDEO_TEXT)) {
                     Log.d(TAG, "finish, now: " + currentStep);
                     Toast.makeText(this, "成功发起与" + target + "的视频聊天", Toast.LENGTH_LONG).show();
                 }
