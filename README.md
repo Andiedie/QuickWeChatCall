@@ -10,8 +10,8 @@
 
 ## 安装
 ### Prerequisites
-- Android 6.0 Marshmallow 及以上
-- 安装并登陆了微信（目前只测试了 6.6.7 和 6.7.3 版本）
+- Android 5.0 及以上
+- 安装并登陆了微信（仅支持微信 7.0.0 ）
 
 ### APK
 从 [Release](https://github.com/Andiedie/QuickWeChatCall/releases) 下载最新版本，安装到安卓手机即可。
